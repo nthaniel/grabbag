@@ -10,7 +10,15 @@ app.controller('AppController', function($scope, Results) {
     Results.sendQuery($scope.query)
     .then(function(res) {
       console.dir(res);
-      $scope.results.push(res.name + ': ' + res.main.temp);
+      console.log(res.weather);
+      if (res.weather) {
+        res.weather = JSON.parse(res.weather);
+        console.log('res.weather is', res.weather);
+        console.log('res.weather.name is', res.weather.name);
+        $scope.results.push(res.weather.name + ': ' + res.weather.main.temp + 'ºF and ' + res.weather.weather[0].description);
+      } else if (res.timer) {
+        $scope.results.push(res.timer[0] + ' ' + res.timer[1]);
+      }
       $scope.query = '';
     });
   };
@@ -19,7 +27,7 @@ app.controller('AppController', function($scope, Results) {
 app.factory('Results', function($http) {
   var Results = {};
   Results.sendQuery = function(query) {
-    return $http.post('/city', {query: query})
+    return $http.post('/query', {query: query})
     .then(function(res) {
       return res.data;
     })

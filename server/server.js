@@ -3,22 +3,43 @@ var bodyParser = require('body-parser');
 require("babel-register")({
   presets: ['es2015']
 });
-var q = require('./queryWeatherAPI');
+var weatherAPI = require('./queryWeatherAPI');
+var string2num = require('./stringToNumber')
 
 var app = express();
 
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client'));
 
+var weatherRegex = /\w*weather\sin\s([\w\s]*)/i;
+// var timerRegex = /^give\sme\s(\d+|\w+)\s(minute[s]?|second[s]?)/i;
+var timerRegex = /(\d+|\w+)\s(minute[s]?|second[s]?)/i;
 
-app.post('/city', function(req, res, error) {
+
+app.post('/query', function(req, res, error) {
   console.log('req.body was', req.body);
-  q(req.body.query)
-  .then(function(body) {
-    console.log('THIS IS WHAT NATHANIEL WANTED', body);
-    res.send(body);
-  })
-  .catch(console.log.bind(console))
+  var query = req.body.query;
+
+  var weatherCity = weatherRegex.exec(query);
+  var timer = timerRegex.exec(query);
+
+  console.log(weatherCity);
+  console.log(timer);
+
+  if (weatherCity) {
+    weatherAPI(weatherCity[1])
+    .then(function(body) {
+      console.log('received this from weather API:', body);
+      res.send({weather: body});
+    })
+    .catch(console.log.bind(console))
+  } else if (timer) {
+    timer[1] = string2num(timer[1]);
+    res.send({timer: [timer[1], timer[2]]}); 
+  } else {
+    res.send();
+  }
+
 });
 
 app.listen(1337);

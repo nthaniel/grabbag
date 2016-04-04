@@ -44,6 +44,6 @@ input:focus {
   outline: none;
 }
 
-span::after {
+/*span::after {
   content: '\00B0 F \3000 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
-}
+}*/

@@ -1,5 +1,5 @@
 var request = require('request');
-var API_KEY = require('../.config').API_KEY;
+var API_KEY = require('../.config').WEATHER_API_KEY;
 
 
 module.exports = function (query) {
