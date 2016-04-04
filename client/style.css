@@ -1,0 +1,49 @@
+body {
+  background-color: rgba(255, 165, 0, 0.85);
+  font-family: 'arial';
+}
+
+/*.container {
+  width: 30%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}*/
+
+
+
+h1, form {
+  text-align: center;
+  width: 30rem;
+  margin: 2rem auto;
+}
+
+input {
+  width: 70%;
+  height: 1.3rem;
+  border-radius: 1rem;
+  border: 0;
+  padding: 0.4rem 0.8rem;
+  font-size: medium;
+}
+
+
+.city {
+  width: 20rem;
+  margin: 1rem auto;
+  padding: 0.5rem;
+  padding-left: 0.8rem;
+  background-color: rgba(255, 165, 0, 0.9);
+  border-radius: 10rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+input:focus {
+  outline: none;
+}
+
+span::after {
+  content: '\00B0 F \3000 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
+}

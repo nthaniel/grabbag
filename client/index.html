@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html ng-app='grabbag'>
+<head>
+  <meta charset="utf-8" />
+  <title>grabbag.io</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="lib/angular/angular.js"></script>
+  <script src="app/app.js"></script>
+</head>
+<body ng-controller="AppController" >
+  <!-- <div class="container"> -->
+    <h1>grabbag.io</h1>
+    <form ng-submit="submitHandler()">
+      <input name="city" type="text" ng-model="query" >
+    </form>
+    <div class="city" ng-repeat="result in results track by $index"><span>{{ result }}</span></div>
+  <!-- </div> -->
+</body>
+</html>
