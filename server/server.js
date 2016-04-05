@@ -14,6 +14,7 @@ app.use(express.static(__dirname + '/../client'));
 var weatherRegex = /\w*weather\sin\s([\w\s]*)/i;
 // var timerRegex = /^give\sme\s(\d+|\w+)\s(minute[s]?|second[s]?)/i;
 var timerRegex = /(\d+|\w+)\s(minute[s]?|second[s]?)/i;
+var clearRegex = /clear\s?(\w*)/i;
 
 
 app.post('/query', function(req, res, error) {
@@ -22,9 +23,11 @@ app.post('/query', function(req, res, error) {
 
   var weatherCity = weatherRegex.exec(query);
   var timer = timerRegex.exec(query);
+  var clear = clearRegex.exec(query);
 
-  console.log(weatherCity);
-  console.log(timer);
+  // console.log(weatherCity);
+  // console.log(timer);
+  console.log(clear);
 
   if (weatherCity) {
     weatherAPI(weatherCity[1])
@@ -36,6 +39,8 @@ app.post('/query', function(req, res, error) {
   } else if (timer) {
     timer[1] = string2num(timer[1]);
     res.send({timer: [timer[1], timer[2]]}); 
+  } else if (clear) {
+    res.send({clear: clear[1]});
   } else {
     res.send();
   }
