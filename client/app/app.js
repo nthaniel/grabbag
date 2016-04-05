@@ -4,25 +4,18 @@ app.controller('AppController', function($scope, Results, Weather, Timer, Clear)
 
   $scope.query = '';
 
-  $scope.format = 'h:mm:ss a';
-  $scope.timerFormat = 'mm:ss';
-
   $scope.results = [];
 
   $scope.submitHandler = function() {
     Results.sendQuery($scope.query)
     .then(function(res) {
-      console.dir(res);
-      console.log(res.weather);
       if (res.weather) {
         res.weather = JSON.parse(res.weather);
         $scope.results.push(Weather(res.weather));
       } else if (res.timer) {
-        // $scope.results.push(res.timer[0] + ' ' + res.timer[1]);
-        console.log(res.timer);
         Timer.addTimer(res.timer);
       } else if (res.clear) {
-        console.log('hi, clearing now');
+        console.log('clearing');
         Clear();
       }
       $scope.query = '';
@@ -52,9 +45,9 @@ app.factory('Timer', function() {
   Timer.addTimer = function(time) {
 
     var future = new Date();
+    console.log(time[1]);
     time[1][0] === 'm' ? future = future.setMinutes(future.getMinutes() + time[0]).toString()
     : future = future.setSeconds(future.getSeconds() + time[0]).toString();
-    console.log(future);
 
     var $target = $('body');
 
@@ -63,8 +56,6 @@ app.factory('Timer', function() {
     angular.element($target).injector().invoke(function($compile) {
       var $scope = angular.element($target).scope();
       $target.append($compile($div)($scope));
-    // Finally, refresh the watch expressions in the new element
-      // $scope.$apply();
     });
 
   };
@@ -91,10 +82,8 @@ app.directive('draggable', function() {
 app.directive('myTimer', ['$interval', function($interval) {
 
   function link(scope, element, attrs) {
-
+    var timeoutId;
     var endtime = eval(attrs.endtime)();
-
-    console.log('endtime is', endtime);
 
     function getTimeRemaining() {
       var t = endtime - Date.parse(new Date());
@@ -122,16 +111,14 @@ app.directive('myTimer', ['$interval', function($interval) {
         element.text(t.minutes + ':' + t.seconds);
 
         if (t.total <= 1000) {
-          clearInterval(timeinterval);
           window.alert('Time is up!');
           element.remove();
+          scope.$destroy()
         }
       }
 
       updateClock();
-      var timeinterval = setInterval(updateClock, 1000);
 
-      // start the UI update process; save the timeoutId for canceling
       timeoutId = $interval(function() {
         updateClock(); // update DOM
       }, 1000);
@@ -139,22 +126,9 @@ app.directive('myTimer', ['$interval', function($interval) {
 
     initializeClock();
 
-
-    // function updateTime() {
-    //   var date = new Date();
-    //   date.setMinutes(minutes);
-    //   date.setSeconds(seconds);
-    //   element.text(dateFilter(date, timerFormat));
-    // }
-
     element.on('$destroy', function() {
       $interval.cancel(timeoutId);
     });
-
-    // start the UI update process; save the timeoutId for canceling
-    // timeoutId = $interval(function() {
-    //   updateTime(); // update DOM
-    // }, 1000);
   }
 
   return {
