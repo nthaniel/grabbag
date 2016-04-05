@@ -14,9 +14,8 @@ app.controller('AppController', function($scope, Results, Weather, Timer, Clear)
         $scope.results.push(Weather(res.weather));
       } else if (res.timer) {
         Timer.addTimer(res.timer);
-      } else if (res.clear) {
-        console.log('clearing');
-        Clear();
+      } else if (res.clear !== undefined) {
+        Clear(res.clear);
       }
       $scope.query = '';
     });
@@ -63,9 +62,12 @@ app.factory('Timer', function() {
 })
 
 app.factory('Clear', function() {
-  return function() {
-    console.log('widgets are:', $('.widget'));
-    $('.widget').remove();
+  return function(toClear) {
+    if (toClear === 'all' || toClear === '') {
+      $('.widget').remove();
+    } else {
+      $('.' + toClear).remove();
+    }
   }
 })
 

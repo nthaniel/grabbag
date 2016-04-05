@@ -15,7 +15,7 @@
     <form ng-submit="submitHandler()">
       <input name="queryField" type="text" ng-model="query" >
     </form>
-    <div class="widget" ng-repeat="result in results track by $index" draggable><span>{{ result }}</span></div>
+    <div class="widget weather" ng-repeat="result in results track by $index" draggable><span>{{ result }}</span></div>
   <!-- </div> -->
 </body>
 </html>
