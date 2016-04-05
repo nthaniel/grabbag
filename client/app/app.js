@@ -1,21 +1,21 @@
 var app = angular.module('grabbag', []);
 
-app.controller('AppController', function($scope, Results, Weather, Timer, Clear) {
+app.controller('AppController', function($scope, Results, Weather, Timer, Clear, Color) {
 
   $scope.query = '';
-
-  $scope.results = [];
 
   $scope.submitHandler = function() {
     Results.sendQuery($scope.query)
     .then(function(res) {
       if (res.weather) {
         res.weather = JSON.parse(res.weather);
-        $scope.results.push(Weather(res.weather));
+        Weather.addWeather(res.weather);
       } else if (res.timer) {
         Timer.addTimer(res.timer);
       } else if (res.clear !== undefined) {
         Clear(res.clear);
+      } else if (res.color) {
+        Color(res.color);
       }
       $scope.query = '';
     });
@@ -34,9 +34,21 @@ app.factory('Results', function($http) {
 });
 
 app.factory('Weather', function() {
-  return function(weather) {
-    return weather.name + ': ' + weather.main.temp + 'ºF and ' + weather.weather[0].description;
+  var Weather = {};
+  Weather.addWeather = function(weather) {
+    var $target = $('body');
+
+    var $div = '<my-weather class="widget weather" draggable>' + weather.name + ': ' + weather.main.temp + 'ºF and ' + weather.weather[0].description + '</my-weather>';
+    // var $div = '<my-weather class="widget weather" draggable"></my-weather>';
+
+    angular.element($target).injector().invoke(function($compile) {
+      console.log('compiling');
+      var $scope = angular.element($target).scope();
+      $target.append($compile($div)($scope));
+    });
+
   }
+  return Weather;
 })
 
 app.factory('Timer', function() {
@@ -44,7 +56,6 @@ app.factory('Timer', function() {
   Timer.addTimer = function(time) {
 
     var future = new Date();
-    console.log(time[1]);
     time[1][0] === 'm' ? future = future.setMinutes(future.getMinutes() + time[0]).toString()
     : future = future.setSeconds(future.getSeconds() + time[0]).toString();
 
@@ -68,6 +79,22 @@ app.factory('Clear', function() {
     } else {
       $('.' + toClear).remove();
     }
+  }
+})
+
+app.factory('Color', function() {
+  return function(color) {
+    var rgb,
+        tmp = document.body.appendChild(document.createElement("div"));
+
+    tmp.style.backgroundColor = color;
+    rgb = window.getComputedStyle(tmp, null).backgroundColor;
+    rgb = rgb.split('');
+    rgb.splice(-1, 0, ', 0.5');
+    rgb.splice(3, 0, 'a');
+    rgb = rgb.join('');
+    document.body.removeChild(tmp);
+    $('body').css('background-color', rgb);
   }
 })
 
@@ -137,3 +164,15 @@ app.directive('myTimer', ['$interval', function($interval) {
     link: link
   };
 }]);
+
+app.directive('myWeather', function() {
+  function link(scope, element, attrs) {
+
+    // element.text(weather.name + ': ' + weather.main.temp + 'ºF and ' + weather.weather[0].description);
+
+
+    return {
+      link: link
+    };
+  }
+});
