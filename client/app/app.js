@@ -45,6 +45,7 @@ app.factory('Weather', function() {
       console.log('compiling');
       var $scope = angular.element($target).scope();
       $target.append($compile($div)($scope));
+      $('.widget').css('background-color', $scope.cdColor);
     });
 
   }
@@ -66,6 +67,8 @@ app.factory('Timer', function() {
     angular.element($target).injector().invoke(function($compile) {
       var $scope = angular.element($target).scope();
       $target.append($compile($div)($scope));
+      $('.widget').css('background-color', $scope.cdColor);
+      // $('widget:last').css() make color a rootscope property
     });
 
   };
@@ -85,16 +88,24 @@ app.factory('Clear', function() {
 app.factory('Color', function() {
   return function(color) {
     var rgb,
+        customRGB,
         tmp = document.body.appendChild(document.createElement("div"));
 
     tmp.style.backgroundColor = color;
     rgb = window.getComputedStyle(tmp, null).backgroundColor;
     rgb = rgb.split('');
-    rgb.splice(-1, 0, ', 0.5');
     rgb.splice(3, 0, 'a');
+    customRGB = rgb.slice();
+    customRGB.splice(-1, 0, ', 0.35');
+    customRGB = customRGB.join('');
+    rgb.splice(-1, 0, ', 0.6');
     rgb = rgb.join('');
     document.body.removeChild(tmp);
+    var $scope = $('body').scope();
+    $scope.color = rgb;
+    $scope.cdColor = customRGB;
     $('body').css('background-color', rgb);
+    $('.widget').css('background-color', customRGB);
   }
 })
 

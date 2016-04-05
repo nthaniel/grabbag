@@ -21,13 +21,13 @@ app.post('/query', function(req, res, error) {
   console.log('req.body was', req.body);
   var query = req.body.query;
 
-  var weatherCity = weatherRegex.exec(query);
+  var weather = weatherRegex.exec(query);
   var timer = timerRegex.exec(query);
   var clear = clearRegex.exec(query);
   var color = colorRegex.exec(query);
 
-  if (weatherCity) {
-    weatherAPI(weatherCity[1])
+  if (weather) {
+    weatherAPI(weather[1])
     .then(function(body) {
       console.log('received this from weather API:', body);
       res.send({weather: body});
@@ -41,6 +41,9 @@ app.post('/query', function(req, res, error) {
   } else if (color) {
     res.send({color: color[1]});
   } else {
+    // search database for query
+      // if it's there, increment frequency by one
+      // otherwise, add it to database
     res.send();
   }
 
